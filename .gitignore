@@ -104,4 +104,8 @@ fabric.properties
 # Sonarlint plugin
 .idea/sonarlint
 
+### Java-Web ###
+## ignoring target file
+target/
+
 # End of https://www.gitignore.io/api/intellij
