@@ -1,5 +1,7 @@
 package com.task.delivery.utils;
 
+import com.task.delivery.models.Geocode;
+
 public class DistanceUtils {
 
     /**
@@ -13,7 +15,7 @@ public class DistanceUtils {
      * @return Distance in kilometers
      */
     public static int distance(double lat1, double lat2, double lon1,
-                                  double lon2) {
+                               double lon2) {
 
         final int R = 6371; // Radius of the earth
 
@@ -28,5 +30,17 @@ public class DistanceUtils {
         distance = Math.pow(distance, 2);
 
         return (int) Math.sqrt(distance) / 1000;
+    }
+
+    /**
+     * Calculate distance between two points in latitude and longitude taking
+     * into account height difference. Uses Haversine method as its base.
+     *
+     * @param g1 starting geo position
+     * @param g2 ending geo position
+     * @return Distance in kilometers
+     */
+    public static int distance(Geocode g1, Geocode g2) {
+        return distance(g1.getLat(), g2.getLat(), g1.getLon(), g2.getLon());
     }
 }
