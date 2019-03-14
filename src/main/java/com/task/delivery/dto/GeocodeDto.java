@@ -35,6 +35,10 @@ public class GeocodeDto {
         return new GeocodeDto(breweryId, lon, lat, distance);
     }
 
+    public int beerCount() {
+        return beerDtos.size();
+    }
+
     public List<BeerDto> getBeerDtos() {
         return beerDtos;
     }
@@ -55,10 +59,16 @@ public class GeocodeDto {
         return breweryId;
     }
 
+    /**
+     * X
+     */
     public double getLon() {
         return lon;
     }
 
+    /**
+     * Y
+     */
     public double getLat() {
         return lat;
     }

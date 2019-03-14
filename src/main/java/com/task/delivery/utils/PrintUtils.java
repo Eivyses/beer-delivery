@@ -10,20 +10,21 @@ public class PrintUtils {
 
     public static void printResult(List<GeocodeDto> results) {
         List<BeerDto> beerDtos = new ArrayList<>();
-        System.out.println(String.format("Found %d beer factories:", results.size() - 2));
+        int factoriesCount = results.size() > 0 ? results.size() - 2 : 0;
+        System.out.println(String.format("Found %d beer factories:", factoriesCount));
 
         int distance = 0;
         for (GeocodeDto geocodeDto : results) {
             distance += geocodeDto.getDistance();
             beerDtos.addAll(geocodeDto.getBeerDtos());
-            System.out.println(geocodeDto.toString());
+//            System.out.println(geocodeDto.toString());
         }
 
-        System.out.println("Total distance traveled: " + distance + "\n\n");
+        System.out.println("Total distance traveled: " + distance);
 
         System.out.println(String.format("Collected %d beer types:", beerDtos.size()));
         for (BeerDto beerDto : beerDtos) {
-            System.out.println(beerDto.toString());
+//            System.out.println(beerDto.toString());
         }
     }
 }

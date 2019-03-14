@@ -13,12 +13,18 @@ public class App {
     public static final int TOTAL_DISTANCE = 2000;
     private static final double LAT_DEFAULT = 51.742503;
     private static final double LON_DEFAULT = 19.432956;
+
+    private static final double LAT_DEFAULT2 = 50.929115;
+    private static final double LON_DEFAULT2 = 18.438955;
+
+    private static final double LAT_DEFAULT3 = 52.559864;
+    private static final double LON_DEFAULT3 = 16.553510;
     private static final String OPTIMIZE = "optimize";
 
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
-        double lat = LAT_DEFAULT;
-        double lon = LON_DEFAULT;
+        double lat = LAT_DEFAULT3;
+        double lon = LON_DEFAULT3;
         boolean optimize = false;
 
 
@@ -36,13 +42,25 @@ public class App {
         GeocodeDto startGeo = new GeocodeDto(0, lon, lat, 0);
         List<GeocodeDto> geocodeDtos = DatabaseUtils.getGeocodes(startGeo, TOTAL_DISTANCE);
 
-        if (geocodeDtos != null) {
-            Optimizer optimizer = optimize ? new AdvancedOptimization() : new SimpleOptimizer();
-            List<GeocodeDto> results = optimizer.optimize(geocodeDtos, startGeo);
-            PrintUtils.printResult(results);
-        } else {
-            System.out.println("Failed to read data from database");
-        }
+        System.out.println("SIMPLE");
+        Optimizer optimizer = new SimpleOptimizer();
+        List<GeocodeDto> results = optimizer.optimize(geocodeDtos, startGeo);
+        PrintUtils.printResult(results);
+
+        System.out.println("\n\nADVANCED");
+        startGeo = new GeocodeDto(0, lon, lat, 0);
+        geocodeDtos = DatabaseUtils.getGeocodes(startGeo, TOTAL_DISTANCE);
+        optimizer = new AdvancedOptimization();
+        results = optimizer.optimize(geocodeDtos, startGeo);
+        PrintUtils.printResult(results);
+
+//        if (geocodeDtos != null) {
+//            Optimizer optimizer = optimize ? new AdvancedOptimization() : new SimpleOptimizer();
+//            List<GeocodeDto> results = optimizer.optimize(geocodeDtos, startGeo);
+//            PrintUtils.printResult(results);
+//        } else {
+//            System.out.println("Failed to read data from database");
+//        }
 
         long finish = System.currentTimeMillis();
         long elapsed = finish - start;
