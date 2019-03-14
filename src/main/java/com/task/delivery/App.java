@@ -29,7 +29,7 @@ public class App {
         long start = System.currentTimeMillis();
         double lat = LAT_DEFAULT;
         double lon = LON_DEFAULT;
-        boolean optimize = true;
+        boolean optimize = false;
 
 
         if (args.length == 2) {
@@ -51,7 +51,7 @@ public class App {
             List<GeocodeDto> results = optimizer.optimize(geocodeDtos, startGeo);
             PrintUtils.printResult(results);
         } else {
-            System.out.println("Failed to read models from database");
+            System.out.println("Failed to read data from database");
         }
 
         long finish = System.currentTimeMillis();

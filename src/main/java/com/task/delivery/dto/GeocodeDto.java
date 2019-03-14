@@ -30,11 +30,6 @@ public class GeocodeDto {
         this(geocodeDto.getBreweryId(), geocodeDto.getLon(), geocodeDto.getLat(), geocodeDto.getDistance(), geocodeDto.getName(), geocodeDto.getBeerDtos());
     }
 
-    public static GeocodeDto of(long breweryId, double lon, double lat, GeocodeDto from) {
-        int distance = from.distanceToLocationInKm(lat, lon);
-        return new GeocodeDto(breweryId, lon, lat, distance);
-    }
-
     public int beerCount() {
         return beerDtos.size();
     }
@@ -43,16 +38,8 @@ public class GeocodeDto {
         return beerDtos;
     }
 
-    public void setBeerDtos(List<BeerDto> beerDtos) {
-        this.beerDtos = beerDtos;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public long getBreweryId() {

@@ -46,4 +46,92 @@ public class Beer {
     public BeerDto toDto() {
         return new BeerDto(name);
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Brewery getBrewery() {
+        return brewery;
+    }
+
+    public void setBrewery(Brewery brewery) {
+        this.brewery = brewery;
+    }
+
+    public double getAbv() {
+        return abv;
+    }
+
+    public void setAbv(double abv) {
+        this.abv = abv;
+    }
+
+    public double getIbu() {
+        return ibu;
+    }
+
+    public void setIbu(double ibu) {
+        this.ibu = ibu;
+    }
+
+    public double getSrm() {
+        return srm;
+    }
+
+    public void setSrm(double srm) {
+        this.srm = srm;
+    }
+
+    public String getFilepath() {
+        return filepath;
+    }
+
+    public void setFilepath(String filepath) {
+        this.filepath = filepath;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getLastMod() {
+        return lastMod;
+    }
+
+    public void setLastMod(String lastMod) {
+        this.lastMod = lastMod;
+    }
+
+    public int getUpc() {
+        return upc;
+    }
+
+    public void setUpc(int upc) {
+        this.upc = upc;
+    }
+
+    public int getAddUser() {
+        return addUser;
+    }
+
+    public void setAddUser(int addUser) {
+        this.addUser = addUser;
+    }
 }

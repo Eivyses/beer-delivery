@@ -47,4 +47,28 @@ public class Geocode {
         geocodeDto.recalculateDistance(startGeocode);
         return geocodeDto;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setBrewery(Brewery brewery) {
+        this.brewery = brewery;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getAccuracy() {
+        return accuracy;
+    }
+
+    public void setAccuracy(String accuracy) {
+        this.accuracy = accuracy;
+    }
 }

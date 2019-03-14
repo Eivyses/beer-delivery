@@ -4,7 +4,7 @@ public class BestElementContainer {
 
     private String bestString;
     private int bestZone;
-    private double bestDouble;
+    private double bestCoef;
 
     public BestElementContainer() {
 
@@ -26,11 +26,11 @@ public class BestElementContainer {
         this.bestZone = bestZone;
     }
 
-    public double getBestDouble() {
-        return bestDouble;
+    public double getBestCoef() {
+        return bestCoef;
     }
 
-    public void setBestDouble(double bestDouble) {
-        this.bestDouble = bestDouble;
+    public void setBestCoef(double bestCoef) {
+        this.bestCoef = bestCoef;
     }
 }
