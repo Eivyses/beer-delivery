@@ -19,12 +19,16 @@ public class App {
 
     private static final double LAT_DEFAULT3 = 52.559864;
     private static final double LON_DEFAULT3 = 16.553510;
+
+    private static final double LAT_DEFAULT4 = 51.981708;
+    private static final double LON_DEFAULT4 = 22.637236;
+
     private static final String OPTIMIZE = "optimize";
 
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
-        double lat = LAT_DEFAULT3;
-        double lon = LON_DEFAULT3;
+        double lat = LAT_DEFAULT4;
+        double lon = LON_DEFAULT4;
         boolean optimize = false;
 
 

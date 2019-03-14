@@ -18,7 +18,8 @@ public class AdvancedOptimization extends Optimizer {
 
             int zoneSize = (remainingDistance / 2) / 4;
             String bestString = "";
-            int bestInt = 0;
+            int bestZone = 0;
+            double bestDouble = 0.0;
 
             for (GeocodeDto geocodeDto : geocodeDtos) {
                 startGeo.recalculateDistance(geocodeDto);
@@ -39,11 +40,15 @@ public class AdvancedOptimization extends Optimizer {
                     zoneInfo.add(0);
                     zoneInfo.add(0);
                 }
-                int value1 = zoneInfo.get(0) + geocodeDto.beerCount();
-                if (value1 > bestInt) {
-                    bestInt = value1;
+                int beerCount = zoneInfo.get(0) + geocodeDto.beerCount();
+                double koef = calculateValue(beerCount, zone);
+
+                if (koef > bestDouble) {
+                    bestDouble = koef;
                     bestString = x + y + zone;
+                    bestZone = zone;
                 }
+
                 zoneInfo.set(0, zoneInfo.get(0) + geocodeDto.beerCount());
                 zoneInfo.set(1, zoneInfo.get(0) + 1);
                 fullMap.put(x + y + zone, zoneInfo);
@@ -53,13 +58,15 @@ public class AdvancedOptimization extends Optimizer {
             geocodeDtos.sort(Comparator.comparingInt(GeocodeDto::getDistance));
             for (GeocodeDto geocodeDto : geocodeDtos) {
                 startGeo.recalculateDistance(geocodeDto);
-                if (geocodeDto.getDistance() > remainingDistance - startGeo.getDistance()) {
+                if (geocodeDto.beerCount() <= 0 || geocodeDto.getDistance() > remainingDistance - startGeo.getDistance()) {
+                    continue;
+                }
+                int zoneStart = zoneSize * bestZone;
+                int zoneTo = zoneSize * (bestZone + 1);
+                if (geocodeDto.getDistance() > zoneTo || geocodeDto.getDistance() < zoneStart){
                     continue;
                 }
                 boolean match = false;
-                if (geocodeDto.beerCount() <= 0) {
-                    continue;
-                }
                 if (bestString.contains("rb")) {
                     if (startGeo.getLat() > geocodeDto.getLat() && startGeo.getLon() < geocodeDto.getLon()) {
                         match = true;
@@ -98,6 +105,10 @@ public class AdvancedOptimization extends Optimizer {
         results.add(endGeo);
 
         return results;
+    }
+
+    private static double calculateValue(int beerCount, int zone){
+        return (0.5 * beerCount) / Math.pow(zone + 1, 4);
     }
 
 }
