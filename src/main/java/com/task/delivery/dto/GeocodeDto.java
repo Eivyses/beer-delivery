@@ -1,9 +1,9 @@
-package com.task.delivery.models;
+package com.task.delivery.dto;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Geocode {
+public class GeocodeDto {
     private static final int EARTH_RADIUS = 6371;
 
     private long breweryId;
@@ -11,36 +11,36 @@ public class Geocode {
     private double lat;
     private int distance;
     private String name;
-    private List<Beer> beers;
+    private List<BeerDto> beerDtos;
 
-    public Geocode(long breweryId, double lon, double lat, int distance) {
-        this(breweryId, lon, lat, distance, "NONE", new ArrayList<>());
+    public GeocodeDto(long breweryId, double lon, double lat, int distance) {
+        this(breweryId, lon, lat, distance, "HOME", new ArrayList<>());
     }
 
-    public Geocode(long breweryId, double lon, double lat, int distance, String name, List<Beer> beers) {
+    public GeocodeDto(long breweryId, double lon, double lat, int distance, String name, List<BeerDto> beerDtos) {
         this.breweryId = breweryId;
         this.lon = lon;
         this.lat = lat;
         this.distance = distance;
-        this.beers = beers;
+        this.beerDtos = beerDtos;
         this.name = name;
     }
 
-    public Geocode(Geocode geocode) {
-        this(geocode.getBreweryId(), geocode.getLon(), geocode.getLat(), geocode.getDistance(), geocode.getName(), geocode.getBeers());
+    public GeocodeDto(GeocodeDto geocodeDto) {
+        this(geocodeDto.getBreweryId(), geocodeDto.getLon(), geocodeDto.getLat(), geocodeDto.getDistance(), geocodeDto.getName(), geocodeDto.getBeerDtos());
     }
 
-    public static Geocode of(long breweryId, double lon, double lat, Geocode from) {
+    public static GeocodeDto of(long breweryId, double lon, double lat, GeocodeDto from) {
         int distance = from.distanceToLocationInKm(lat, lon);
-        return new Geocode(breweryId, lon, lat, distance);
+        return new GeocodeDto(breweryId, lon, lat, distance);
     }
 
-    public List<Beer> getBeers() {
-        return beers;
+    public List<BeerDto> getBeerDtos() {
+        return beerDtos;
     }
 
-    public void setBeers(List<Beer> beers) {
-        this.beers = beers;
+    public void setBeerDtos(List<BeerDto> beerDtos) {
+        this.beerDtos = beerDtos;
     }
 
     public String getName() {
@@ -71,16 +71,16 @@ public class Geocode {
         this.distance = distance;
     }
 
-    public void recalculateDistance(Geocode toGeocode) {
-        int newDistance = distanceToLocationInKm(toGeocode.getLat(), toGeocode.getLon());
+    public void recalculateDistance(GeocodeDto toGeocodeDto) {
+        int newDistance = distanceToLocationInKm(toGeocodeDto.getLat(), toGeocodeDto.getLon());
         this.setDistance(newDistance);
     }
 
-    public int distanceToOther(Geocode toGeocode) {
-        return distanceToLocationInKm(toGeocode.getLat(), toGeocode.getLon());
+    public int distanceToOther(GeocodeDto toGeocodeDto) {
+        return distanceToLocationInKm(toGeocodeDto.getLat(), toGeocodeDto.getLon());
     }
 
-    private int distanceToLocationInKm(double endLat, double endLon) {
+    public int distanceToLocationInKm(double endLat, double endLon) {
         double latDistance = Math.toRadians(endLat - lat);
         double lonDistance = Math.toRadians(endLon - lon);
         double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
