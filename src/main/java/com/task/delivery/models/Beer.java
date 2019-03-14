@@ -27,4 +27,16 @@ public class Beer {
     public String toString() {
         return String.format("     -> %s", this.name);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Beer)) {
+            return false;
+        }
+        Beer beer = (Beer) obj;
+        return this.name.equals(beer.name) && this.breweryId == beer.breweryId;
+    }
 }

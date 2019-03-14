@@ -74,10 +74,6 @@
                     <version>1.2.1</version>
                     <configuration>
                         <mainClass>com.task.delivery.App</mainClass>
-                        <arguments>
-                            <argument>51.742503</argument>
-                            <argument>19.432956</argument>
-                        </arguments>
                     </configuration>
                 </plugin>
 
