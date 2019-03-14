@@ -1,6 +1,7 @@
 package com.task.delivery.optimization;
 
 import com.task.delivery.dto.GeocodeDto;
+import com.task.delivery.optimization.models.BestElementContainer;
 
 import java.util.*;
 
@@ -8,84 +9,41 @@ import static com.task.delivery.App.TOTAL_DISTANCE;
 
 public class AdvancedOptimization extends Optimizer {
 
+    private static final String LEFT = "l";
+    private static final String RIGHT = "r";
+    private static final String TOP = "t";
+    private static final String BOTTOM = "b";
+
+    private static double calculateEfficiencyCoefficient(int beerCount, int zone) {
+        return (0.5 * beerCount) / Math.pow(zone + 1, 4);
+    }
+
+    /*
+     * Splits map into quarters and finds which quarter has the most types of beers
+     * After that, goes to that particular quarter while visiting closest biggest factory
+     * After going to factory, again recalculates everything
+     */
     @Override
     protected List<GeocodeDto> calculateOptimizationResults(List<GeocodeDto> geocodeDtos, GeocodeDto startGeo) {
         int remainingDistance = TOTAL_DISTANCE;
         List<GeocodeDto> results = new ArrayList<>();
 
         while (startGeo.getDistance() <= remainingDistance) {
-            Map<String, List<Integer>> fullMap = new HashMap<>();
+            int singleZoneRadius = (remainingDistance / 2) / 4;
+            BestElementContainer bestElement = findBestDirection(geocodeDtos, remainingDistance, singleZoneRadius, startGeo);
 
-            int zoneSize = (remainingDistance / 2) / 4;
-            String bestString = "";
-            int bestZone = 0;
-            double bestDouble = 0.0;
-
-            for (GeocodeDto geocodeDto : geocodeDtos) {
-                startGeo.recalculateDistance(geocodeDto);
-                if (geocodeDto.getDistance() > remainingDistance - startGeo.getDistance()) {
-                    continue;
-                }
-                int zone = geocodeDto.getDistance() / zoneSize;
-                if (zone >= 4) {
-                    zone = 3;
-                }
-
-                String x = startGeo.getLon() > geocodeDto.getLon() ? "l" : "r";
-                String y = startGeo.getLat() > geocodeDto.getLat() ? "b" : "t";
-
-                List<Integer> zoneInfo = fullMap.get(x + y + zone);
-                if (zoneInfo == null) {
-                    zoneInfo = new ArrayList<>();
-                    zoneInfo.add(0);
-                    zoneInfo.add(0);
-                }
-                int beerCount = zoneInfo.get(0) + geocodeDto.beerCount();
-                double koef = calculateValue(beerCount, zone);
-
-                if (koef > bestDouble) {
-                    bestDouble = koef;
-                    bestString = x + y + zone;
-                    bestZone = zone;
-                }
-
-                zoneInfo.set(0, zoneInfo.get(0) + geocodeDto.beerCount());
-                zoneInfo.set(1, zoneInfo.get(0) + 1);
-                fullMap.put(x + y + zone, zoneInfo);
-            }
-
-//            System.out.println("best direction: " + bestString);
             geocodeDtos.sort(Comparator.comparingInt(GeocodeDto::getDistance));
             for (GeocodeDto geocodeDto : geocodeDtos) {
                 startGeo.recalculateDistance(geocodeDto);
                 if (geocodeDto.beerCount() <= 0 || geocodeDto.getDistance() > remainingDistance - startGeo.getDistance()) {
                     continue;
                 }
-                int zoneStart = zoneSize * bestZone;
-                int zoneTo = zoneSize * (bestZone + 1);
-                if (geocodeDto.getDistance() > zoneTo || geocodeDto.getDistance() < zoneStart){
+                int zoneStart = singleZoneRadius * bestElement.getBestZone();
+                int zoneTo = singleZoneRadius * (bestElement.getBestZone() + 1);
+                if (geocodeDto.getDistance() > zoneTo || geocodeDto.getDistance() < zoneStart) {
                     continue;
                 }
-                boolean match = false;
-                if (bestString.contains("rb")) {
-                    if (startGeo.getLat() > geocodeDto.getLat() && startGeo.getLon() < geocodeDto.getLon()) {
-                        match = true;
-                    }
-                } else if (bestString.contains("rt")) {
-                    if (startGeo.getLat() < geocodeDto.getLat() && startGeo.getLon() < geocodeDto.getLon()) {
-                        match = true;
-                    }
-                } else if (bestString.contains("lb")) {
-                    if (startGeo.getLat() > geocodeDto.getLat() && startGeo.getLon() > geocodeDto.getLon()) {
-                        match = true;
-                    }
-                } else if (bestString.contains("lt")) {
-                    if (startGeo.getLat() < geocodeDto.getLat() && startGeo.getLon() > geocodeDto.getLon()) {
-                        match = true;
-                    }
-                }
-                if (match) {
-                    startGeo.recalculateDistance(geocodeDto);
+                if (geoMathcesBestQuarter(bestElement.getBestString(), startGeo, geocodeDto)) {
                     results.add(new GeocodeDto(geocodeDto));
                     remainingDistance -= geocodeDto.getDistance();
                     geocodeDtos.remove(geocodeDto);
@@ -93,22 +51,69 @@ public class AdvancedOptimization extends Optimizer {
                     break;
                 }
             }
-
-//            fullMap.forEach((k, v) -> System.out.println(String.format("Quarter zone %s has: %d beers in %d factories", k, v.get(0), v.get(1))));
-//            System.out.println();
         }
-        GeocodeDto starting = new GeocodeDto(startGeo.getBreweryId(), startGeo.getLon(), startGeo.getLat(), 0);
-        results.add(0, starting);
-        GeocodeDto endGeo = new GeocodeDto(startGeo);
-        GeocodeDto last = results.get(results.size() - 1);
-        endGeo.recalculateDistance(last);
-        results.add(endGeo);
-
         return results;
     }
 
-    private static double calculateValue(int beerCount, int zone){
-        return (0.5 * beerCount) / Math.pow(zone + 1, 4);
+    private BestElementContainer findBestDirection(List<GeocodeDto> geocodeDtos, int remainingDistance, int singleZoneRadius, GeocodeDto startGeo) {
+        BestElementContainer bestElement = new BestElementContainer();
+        /*
+         * groups models into regions and 4 zones
+         * regions is simple x, y axis graph, where current location is the center of it
+         * zone is a remaining radius split into 4.
+         */
+        Map<String, Integer> groupedDataMap = new HashMap<>();
+
+        for (GeocodeDto geocodeDto : geocodeDtos) {
+            startGeo.recalculateDistance(geocodeDto);
+            if (geocodeDto.getDistance() > remainingDistance - startGeo.getDistance()) {
+                continue;
+            }
+
+            int currentZone = geocodeDto.getDistance() / singleZoneRadius;
+            if (currentZone >= 4) {
+                currentZone = 3;
+            }
+            String x = startGeo.getLon() > geocodeDto.getLon() ? LEFT : RIGHT;
+            String y = startGeo.getLat() > geocodeDto.getLat() ? BOTTOM : TOP;
+            Integer beerCount = groupedDataMap.get(x + y + currentZone);
+
+            if (beerCount == null) {
+                beerCount = 0;
+            }
+            int newBeerCount = beerCount + geocodeDto.beerCount();
+            double koef = calculateEfficiencyCoefficient(newBeerCount, currentZone);
+            if (koef > bestElement.getBestDouble()) {
+                bestElement.setBestDouble(koef);
+                bestElement.setBestString(x + y + currentZone);
+                bestElement.setBestZone(currentZone);
+            }
+            groupedDataMap.put(x + y + currentZone, newBeerCount);
+        }
+        //            System.out.println("best direction: " + bestString);
+        //            fullMap.forEach((k, v) -> System.out.println(String.format("Quarter zone %s has: %d beers", k, v)));
+        //            System.out.println();
+        return bestElement;
     }
 
+    private boolean geoMathcesBestQuarter(String betQuarterString, GeocodeDto startGeo, GeocodeDto currentGeo) {
+        if (betQuarterString.contains(RIGHT + BOTTOM)) {
+            if (startGeo.getLat() > currentGeo.getLat() && startGeo.getLon() < currentGeo.getLon()) {
+                return true;
+            }
+        } else if (betQuarterString.contains(RIGHT + TOP)) {
+            if (startGeo.getLat() < currentGeo.getLat() && startGeo.getLon() < currentGeo.getLon()) {
+                return true;
+            }
+        } else if (betQuarterString.contains(LEFT + BOTTOM)) {
+            if (startGeo.getLat() > currentGeo.getLat() && startGeo.getLon() > currentGeo.getLon()) {
+                return true;
+            }
+        } else if (betQuarterString.contains(LEFT + TOP)) {
+            if (startGeo.getLat() < currentGeo.getLat() && startGeo.getLon() > currentGeo.getLon()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

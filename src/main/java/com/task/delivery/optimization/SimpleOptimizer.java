@@ -9,9 +9,12 @@ import java.util.List;
 import static com.task.delivery.App.TOTAL_DISTANCE;
 
 public class SimpleOptimizer extends Optimizer {
+
+    /*
+     * Goes to all the closest factories
+     */
     @Override
     public List<GeocodeDto> calculateOptimizationResults(List<GeocodeDto> geocodeDtos, GeocodeDto startGeo) {
-        geocodeDtos.add(startGeo);
         int remainingDistance = TOTAL_DISTANCE;
         List<GeocodeDto> results = new ArrayList<>();
 
@@ -32,11 +35,6 @@ public class SimpleOptimizer extends Optimizer {
             }
 
         }
-
-        GeocodeDto endGeo = new GeocodeDto(startGeo);
-        GeocodeDto last = results.get(results.size() - 1);
-        endGeo.setDistance(endGeo.distanceToOther(last));
-        results.add(endGeo);
         return results;
     }
 }

@@ -27,9 +27,9 @@ public class App {
 
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
-        double lat = LAT_DEFAULT4;
-        double lon = LON_DEFAULT4;
-        boolean optimize = false;
+        double lat = LAT_DEFAULT;
+        double lon = LON_DEFAULT;
+        boolean optimize = true;
 
 
         if (args.length == 2) {
@@ -46,25 +46,13 @@ public class App {
         GeocodeDto startGeo = new GeocodeDto(0, lon, lat, 0);
         List<GeocodeDto> geocodeDtos = DatabaseUtils.getGeocodes(startGeo, TOTAL_DISTANCE);
 
-        System.out.println("SIMPLE");
-        Optimizer optimizer = new SimpleOptimizer();
-        List<GeocodeDto> results = optimizer.optimize(geocodeDtos, startGeo);
-        PrintUtils.printResult(results);
-
-        System.out.println("\n\nADVANCED");
-        startGeo = new GeocodeDto(0, lon, lat, 0);
-        geocodeDtos = DatabaseUtils.getGeocodes(startGeo, TOTAL_DISTANCE);
-        optimizer = new AdvancedOptimization();
-        results = optimizer.optimize(geocodeDtos, startGeo);
-        PrintUtils.printResult(results);
-
-//        if (geocodeDtos != null) {
-//            Optimizer optimizer = optimize ? new AdvancedOptimization() : new SimpleOptimizer();
-//            List<GeocodeDto> results = optimizer.optimize(geocodeDtos, startGeo);
-//            PrintUtils.printResult(results);
-//        } else {
-//            System.out.println("Failed to read data from database");
-//        }
+        if (geocodeDtos != null) {
+            Optimizer optimizer = optimize ? new AdvancedOptimization() : new SimpleOptimizer();
+            List<GeocodeDto> results = optimizer.optimize(geocodeDtos, startGeo);
+            PrintUtils.printResult(results);
+        } else {
+            System.out.println("Failed to read models from database");
+        }
 
         long finish = System.currentTimeMillis();
         long elapsed = finish - start;

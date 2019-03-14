@@ -17,14 +17,14 @@ public class PrintUtils {
         for (GeocodeDto geocodeDto : results) {
             distance += geocodeDto.getDistance();
             beerDtos.addAll(geocodeDto.getBeerDtos());
-//            System.out.println(geocodeDto.toString());
+            System.out.println(geocodeDto.toString());
         }
 
         System.out.println("Total distance traveled: " + distance);
 
         System.out.println(String.format("Collected %d beer types:", beerDtos.size()));
         for (BeerDto beerDto : beerDtos) {
-//            System.out.println(beerDto.toString());
+            System.out.println(beerDto.toString());
         }
     }
 }
