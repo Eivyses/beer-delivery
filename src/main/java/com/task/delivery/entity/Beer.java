@@ -15,6 +15,12 @@ public class Beer {
     @Column(columnDefinition = "TEXT")
     private String name;
 
+    @Column(name = "cat_id")
+    private int catId;
+
+    @Column(name = "style_id")
+    private int styleId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brewery_id", foreignKey = @ForeignKey(name = "beer_brewery"))
     private Brewery brewery;

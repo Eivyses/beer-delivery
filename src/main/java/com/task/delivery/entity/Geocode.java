@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class Geocode {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @OneToOne(fetch = FetchType.LAZY)

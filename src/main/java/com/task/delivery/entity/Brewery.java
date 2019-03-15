@@ -9,7 +9,7 @@ import java.util.List;
 public class Brewery {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(columnDefinition = "TEXT")
@@ -58,20 +58,24 @@ public class Brewery {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<Beer> getBeers() {
         return beers;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setBeers(List<Beer> beers) {
+        this.beers = beers;
     }
 
     public String getAddress1() {
@@ -168,9 +172,5 @@ public class Brewery {
 
     public void setLastMod(String lastMod) {
         this.lastMod = lastMod;
-    }
-
-    public void setBeers(List<Beer> beers) {
-        this.beers = beers;
     }
 }
