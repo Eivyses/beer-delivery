@@ -23,36 +23,18 @@ public class App {
     private static final double LAT_DEFAULT4 = 51.981708;
     private static final double LON_DEFAULT4 = 22.637236;
 
-    private static final String OPTIMIZE = "optimize";
-
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
         double lat = LAT_DEFAULT;
         double lon = LON_DEFAULT;
         boolean optimize = false;
 
-
-        if (args.length == 2) {
-            lat = Double.parseDouble(args[0]);
-            lon = Double.parseDouble(args[1]);
-        } else if (args.length == 1) {
-            System.out.println("Wrong amount of arguments specified");
-            return;
-        }
-        if (args.length == 3 && args[2].equals(OPTIMIZE)) {
-            optimize = true;
-        }
-
         GeocodeDto startGeo = new GeocodeDto(0, lon, lat, 0);
         List<GeocodeDto> geocodeDtos = DatabaseUtils.getGeocodes(startGeo, TOTAL_DISTANCE);
 
-        if (geocodeDtos != null) {
-            Optimizer optimizer = optimize ? new AdvancedOptimization() : new SimpleOptimizer();
-            List<GeocodeDto> results = optimizer.optimize(geocodeDtos, startGeo);
-            PrintUtils.printResult(results);
-        } else {
-            System.out.println("Failed to read data from database");
-        }
+        Optimizer optimizer = optimize ? new AdvancedOptimization() : new SimpleOptimizer();
+        List<GeocodeDto> results = optimizer.optimize(geocodeDtos, startGeo);
+        PrintUtils.printResult(results);
 
         long finish = System.currentTimeMillis();
         long elapsed = finish - start;
